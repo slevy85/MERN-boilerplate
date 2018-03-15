@@ -1,0 +1,40 @@
+.page-header {
+  background: #eee resolve('assets/img/bloc-note-bk.jpeg') center;
+  text-align: center;
+  padding: 55px 233px 34px 0px;
+}
+
+.table-checkbox-col {
+  text-align: center;
+}
+
+.clickable:hover {
+  cursor: pointer;
+}
+.table-checkbox-col:hover {
+  cursor: default;
+}
+
+.fixed-bottom-right {
+  position: fixed;
+  width: 610px;
+  height: 377px;
+  right: 2%;
+  bottom: 8%;
+  z-index: 10;
+}
+
+.alert-head {
+  background: #cbcbcb;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+.alert textarea {
+  resize: none;
+}
+.closed {
+  display:none;
+}
+.not-closed {
+  display:inherit;
+}
