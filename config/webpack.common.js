@@ -39,7 +39,7 @@ module.exports = {
 
       // SCSS files
       {
-        test: /\.scss$/,
+        test: /\.css$/,
         loader: ExtractTextPlugin.extract({
           fallback: 'style-loader',
           use: [
@@ -54,7 +54,11 @@ module.exports = {
               loader: 'postcss-loader',
               options: {
                 plugins: () => [
-                  autoprefixer
+                  autoprefixer,
+                  require('postcss-assets')({
+                     loadPaths: ['**'],
+                     basePath: 'client/public/'
+                   })
                 ]
               }
             },
@@ -64,7 +68,6 @@ module.exports = {
       }
     ]
   },
-
   plugins: [
     new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.HotModuleReplacementPlugin(),
