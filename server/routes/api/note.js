@@ -3,10 +3,12 @@ const Note = require('../../models/Note');
 
 module.exports = (app) => {
   app.get('/api/notes', (req, res, next) => {
-    Counter.find()
-      .exec()
-      .then((counter) => res.json(counter))
-      .catch((err) => next(err));
+    Note.find().sort('-createdAt').exec((err, notes) => {
+      if (err) {
+        res.status(500).send(err);
+      }
+      res.json({ notes });
+    });
   });
 
   /**
@@ -36,10 +38,10 @@ module.exports = (app) => {
   });
 
   app.delete('/api/notes/:id', function (req, res, next) {
-    Counter.findOneAndRemove({ _id: req.params.id })
+    Note.findOneAndRemove({ _id: req.params.id })
       .exec()
-      .then((counter) => res.json())
-      .catch((err) => next(err));
+      .then((note) => res.status(200).end())
+      .catch((err) => res.status(500).send(err));
   });
 
   app.put('/api/notes/:id/increment', (req, res, next) => {

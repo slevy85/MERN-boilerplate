@@ -7,9 +7,6 @@ class NoteAddBox extends Component {
 
   }
 
-
-
-  // <a href="#" className="close" onClick={this.handleClose}>&times;</a>
   render() {
     if (!this.props.show) return null;
     return (

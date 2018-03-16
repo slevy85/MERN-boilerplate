@@ -9,14 +9,16 @@ class NotePage extends Component {
   constructor(props) {
     super(props);
     this.handleDismissAdd = this.handleDismissAdd.bind(this);
+    this.handleDeleteNotes = this.handleDeleteNotes.bind(this);
     this.handleShowAdd = this.handleShowAdd.bind(this);
     this.handleAddNote = this.handleAddNote.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleContentChange = this.handleContentChange.bind(this);
     this.escFunction = this.escFunction.bind(this);
-
+    this.handleCheckBoxChange = this.handleCheckBoxChange.bind(this);
     this.state = {
       notes: [],
+      selectedIds: [],
       showAdd: false,
       noteTitle: '',
       noteContent: ''
@@ -42,14 +44,52 @@ class NotePage extends Component {
         let newNotes = this.state.notes;
         newNotes.push(res.note);
         this.setState({
-          notes: newNotes
+          notes: newNotes,
+          noteTitle : '',
+          noteContent : '',
+          showAdd: false
         });
     });
   }
 
-  handleDismissAdd() {
-   this.setState({ showAdd: false });
- }
+  handleCheckBoxChange(note, e) {
+    let newSelectedIds = this.state.selectedIds;
+    if(e.target.checked) {
+      newSelectedIds.push(note._id);
+    } else {
+      newSelectedIds = newSelectedIds.filter(id => note._id !== id)
+    }
+    console.log(newSelectedIds)
+    this.setState({
+      selectedIds: newSelectedIds
+    });
+  }
+
+  handleDeleteNotes(e) {
+    let newNotes = this.state.notes;
+    let newSelectedIds = this.state.selectedIds;
+    if (!confirm('Do you want to delete the selected notes ?')){
+      return;
+    }
+    this.state.selectedIds.forEach( idToDelete => {
+      callApi(`notes/${idToDelete}`, 'delete').then(res => {
+        // remove notes from state
+        console.log(res)
+        newNotes = newNotes.filter(note => note._id !== idToDelete)
+        newSelectedIds = newSelectedIds.filter(id => id !== idToDelete)
+        this.setState({
+            notes: newNotes,
+            selectedIds : newSelectedIds
+          });
+      })
+      .catch(error => {alert('Could not delete these notes')});
+    })
+  }
+
+  handleDismissAdd(e) {
+    e.preventDefault();
+    this.setState({ showAdd: false });
+  }
 
   handleShowAdd() {
    this.setState({ showAdd: true });
@@ -58,12 +98,20 @@ class NotePage extends Component {
  escFunction(event){
     //Close add box on escape
    if(event.keyCode === 27) {
-         this.handleDismissAdd()
+      this.handleDismissAdd(event)
    }
  }
 
  componentDidMount(){
-     document.addEventListener("keydown", this.escFunction, false);
+    // Close add box on escape key
+    document.addEventListener("keydown", this.escFunction, false);
+
+    // fetch notes
+    callApi('notes').then(res => {
+      this.setState({
+        notes: res.data.notes
+      });
+    });
  }
  componentWillUnmount(){
      document.removeEventListener("keydown", this.escFunction, false);
@@ -74,7 +122,7 @@ class NotePage extends Component {
         <div>
           <ButtonGroup>
             <Button bsStyle="primary" onClick={this.handleShowAdd}>Add</Button>
-            <Button>Delete</Button>
+            <Button onClick={this.handleDeleteNotes}>Delete</Button>
           </ButtonGroup>
           <NoteAddBox
             show={this.state.showAdd}
@@ -86,6 +134,7 @@ class NotePage extends Component {
             noteContent={this.state.noteContent}/>
           <NoteTable
             data={this.state.notes}
+            handleCheckBoxChange={this.handleCheckBoxChange}
           />
         </div>
     )

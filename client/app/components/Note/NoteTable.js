@@ -1,8 +1,22 @@
-import React, { Component } from 'react';
+import React, { Component, PropTypes } from 'react';
 import ReactTable from 'react-table';
 import { Tips } from '../Utils/Utils';
 import 'react-table/react-table.css'
 import 'whatwg-fetch';
+
+
+
+function CheckBoxCell(props, context) {
+    const _onChange = (e) => {
+      props.handleCheckBoxChange(props.note, e)
+    }
+    return (
+      <input type="checkbox" onChange={_onChange}/>
+    );
+}
+
+CheckBoxCell.propTypes = {
+};
 
 class NoteTable extends Component {
   constructor(props) {
@@ -87,17 +101,12 @@ class NoteTable extends Component {
   }
 
   render() {
-    const data = [
-      {
-       createdAt: new Date().toLocaleString('en-GB', { timeZone: 'UTC' }),
-       title: 'Title note',
-       content: 'This is a note'
-     },
-   ]
-
      const columns = [{
        Header: props => <input type="checkbox"/>,
-       Cell: props => <input type="checkbox"/>,
+       Cell: props => <CheckBoxCell
+                        key={props.original._id}
+                        note={props.original}
+                        handleCheckBoxChange={this.props.handleCheckBoxChange}/>,
        className: 'table-checkbox-col',
        width: 34,
        sortable: false,
@@ -111,13 +120,15 @@ class NoteTable extends Component {
      }, {
        Header: 'Excerpt of the note',
        id: 'content',
-       Cell: (props) => <span><strong>{props.original.title}</strong>&nbsp;{props.original.content}</span>, // Custom cell components!
+       Cell: props => <span><strong>{props.original.title}</strong>&nbsp;{props.original.content}</span>, // Custom cell components!
        className: 'clickable',
      }]
 
     return (
       <div>
       <ReactTable
+         showPaginationTop="true"
+         showPaginationBottom="true"
          noDataText="There is no notes yet !"
          defaultSorted={[
             {
