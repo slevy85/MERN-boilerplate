@@ -33,7 +33,7 @@ class NotePage extends Component {
   }
   handleAddNote(e) {
     console.log(this.state)
-    return callApi('note', 'post', {
+    return callApi('notes', 'post', {
       note: {
         title: this.state.noteTitle,
         content: this.state.noteContent,
@@ -46,7 +46,7 @@ class NotePage extends Component {
         });
     });
   }
-  
+
   handleDismissAdd() {
    this.setState({ showAdd: false });
  }
@@ -84,7 +84,9 @@ class NotePage extends Component {
             onContentChange={this.handleContentChange}
             noteTitle={this.state.noteTitle}
             noteContent={this.state.noteContent}/>
-          <NoteTable / >
+          <NoteTable
+            data={this.state.notes}
+          />
         </div>
     )
   }

@@ -89,7 +89,7 @@ class NoteTable extends Component {
   render() {
     const data = [
       {
-       createdOn: new Date().toLocaleString('en-GB', { timeZone: 'UTC' }),
+       createdAt: new Date().toLocaleString('en-GB', { timeZone: 'UTC' }),
        title: 'Title note',
        content: 'This is a note'
      },
@@ -103,8 +103,8 @@ class NoteTable extends Component {
        sortable: false,
        resizable: false,
      }, {
-       Header: 'Created Date',
-       accessor: 'createdOn', // String-based value accessors!
+       Header: 'Written on',
+       accessor: 'createdAt', // String-based value accessors!
        className: 'clickable',
        width: 233,
        filterable: false
@@ -121,11 +121,11 @@ class NoteTable extends Component {
          noDataText="There is no notes yet !"
          defaultSorted={[
             {
-              id: "createdOn",
+              id: "writtenOn",
               desc: true
             }
           ]}
-         data={data}
+         data={this.props.data}
          columns={columns}
          minRows="5"
          className="-striped -highlight"
