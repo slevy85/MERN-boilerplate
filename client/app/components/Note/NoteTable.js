@@ -3,7 +3,7 @@ import ReactTable from 'react-table';
 import { Tips } from '../Utils/Utils';
 import 'react-table/react-table.css'
 import 'whatwg-fetch';
-
+import { withRouter } from "react-router-dom";
 
 
 function CheckBoxCell(props, context) {
@@ -19,8 +19,8 @@ CheckBoxCell.propTypes = {
 };
 
 class NoteTable extends Component {
-  constructor(props) {
-    super(props);
+  constructor(props,context) {
+    super(props,context);
 
     this.state = {
       counters: []
@@ -151,6 +151,8 @@ class NoteTable extends Component {
                   instance,
                   event: e
                   })
+                  console.log(this.props);
+                  this.props.history.push('/sample');
                 }
             };
           }}
@@ -175,4 +177,4 @@ class NoteTable extends Component {
   }
 }
 
-export default NoteTable;
+export default withRouter(NoteTable);

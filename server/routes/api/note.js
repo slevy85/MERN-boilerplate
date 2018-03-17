@@ -30,7 +30,10 @@ module.exports = (app) => {
     newNote.content = sanitizeHtml(newNote.content);
     console.log('newNote : ' + newNote);
     newNote.save((err, saved) => {
+      console.log(err);
+      console.log(saved);
       if (err) {
+        console.log(err);
         res.status(500).send(err);
       }
       res.json({ note: saved });

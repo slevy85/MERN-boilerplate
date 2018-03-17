@@ -22,6 +22,15 @@ mongoose.connect(isDev ? config.db_dev : config.db, {
   useMongoClient: true,
 });
 mongoose.Promise = global.Promise;
+var db = mongoose.connection;
+  console.log(db);
+    console.log(port);
+      console.log(config);
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  // we're connected!
+  console.log('connected');
+});
 
 const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));

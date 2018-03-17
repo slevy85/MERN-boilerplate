@@ -22,6 +22,7 @@ render((
     <App>
       <Switch>
         <Route exact path="/" component={NotePage}/>
+        <Route path="/notes/" component={HelloWorld}/>
         <Route path="/helloworld" component={HelloWorld}/>
         <Route component={NotFound}/>
       </Switch>

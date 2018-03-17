@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
 import Button from 'react-bootstrap/lib/Button';
+import Dialog from 'react-bootstrap-dialog'
 import NoteAddBox from './NoteAddBox';
 import NoteTable from './NoteTable';
 import callApi from '../Utils/ApiCaller';
@@ -12,10 +13,12 @@ class NotePage extends Component {
     this.handleDeleteNotes = this.handleDeleteNotes.bind(this);
     this.handleShowAdd = this.handleShowAdd.bind(this);
     this.handleAddNote = this.handleAddNote.bind(this);
+    this.handleCancelAddNote = this.handleCancelAddNote.bind(this);
     this.handleTitleChange = this.handleTitleChange.bind(this);
     this.handleContentChange = this.handleContentChange.bind(this);
     this.escFunction = this.escFunction.bind(this);
     this.handleCheckBoxChange = this.handleCheckBoxChange.bind(this);
+
     this.state = {
       notes: [],
       selectedIds: [],
@@ -34,6 +37,31 @@ class NotePage extends Component {
     this.setState({ noteContent: e.target.value });
   }
   handleAddNote(e) {
+    this.dialog.show({
+      body: 'Do you want to add this note ?',
+      bsSize: 'medium',
+      actions: [
+        Dialog.CancelAction(),
+        Dialog.DefaultAction(
+          'Yes',
+          () => {
+            this.doAdd()
+          },
+          'btn-success'
+        )
+      ]
+    })
+  }
+
+  handleCancelAddNote() {
+    this.setState({
+      noteTitle : '',
+      noteContent : '',
+      showAdd: false
+    });
+  }
+
+  doAdd(){
     console.log(this.state)
     return callApi('notes', 'post', {
       note: {
@@ -42,7 +70,7 @@ class NotePage extends Component {
       },
     }).then(res => {
         let newNotes = this.state.notes;
-        newNotes.push(res.note);
+        newNotes.push(res.data.note);
         this.setState({
           notes: newNotes,
           noteTitle : '',
@@ -66,15 +94,31 @@ class NotePage extends Component {
   }
 
   handleDeleteNotes(e) {
-    let newNotes = this.state.notes;
-    let newSelectedIds = this.state.selectedIds;
-    if (!confirm('Do you want to delete the selected notes ?')){
+    if(this.state.selectedIds.length == 0) {
       return;
     }
+    this.dialog.show({
+      body: 'Do you want to delete the selected notes ?',
+      bsSize: 'medium',
+      actions: [
+        Dialog.CancelAction(),
+        Dialog.DefaultAction(
+          'Yes',
+          () => {
+            this.doDelete()
+          },
+          'btn-danger'
+        )
+      ]
+    })
+  }
+
+  doDelete() {
+    let newNotes = this.state.notes;
+    let newSelectedIds = this.state.selectedIds;
     this.state.selectedIds.forEach( idToDelete => {
       callApi(`notes/${idToDelete}`, 'delete').then(res => {
         // remove notes from state
-        console.log(res)
         newNotes = newNotes.filter(note => note._id !== idToDelete)
         newSelectedIds = newSelectedIds.filter(id => id !== idToDelete)
         this.setState({
@@ -126,8 +170,9 @@ class NotePage extends Component {
           </ButtonGroup>
           <NoteAddBox
             show={this.state.showAdd}
-            handleDismiss={this.handleDismissAdd}
-            handleAdd={this.handleAddNote}
+            onDismiss={this.handleDismissAdd}
+            onAdd={this.handleAddNote}
+            onCancel={this.handleCancelAddNote}
             onTitleChange={this.handleTitleChange}
             onContentChange={this.handleContentChange}
             noteTitle={this.state.noteTitle}
@@ -136,6 +181,7 @@ class NotePage extends Component {
             data={this.state.notes}
             handleCheckBoxChange={this.handleCheckBoxChange}
           />
+          <Dialog ref={(el) => { this.dialog = el }} />
         </div>
     )
   }
