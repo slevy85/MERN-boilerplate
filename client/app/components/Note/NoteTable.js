@@ -40,7 +40,7 @@ function NoteTable (props,context) {
        Header: 'Excerpt of the note',
        id: 'title',
        accessor: 'title',
-       Cell: row => <span><strong>{row.original.title}</strong>&nbsp;{row.original.content.substring(0,144)}</span>, // Custom cell components!
+       Cell: row => <span><strong>{row.original.title.substring(0,21)}</strong>&nbsp;{row.original.content.substring(0,55)}</span>, // Custom cell components!
        className: 'clickable',
      }]
 

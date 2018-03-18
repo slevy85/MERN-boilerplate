@@ -22,7 +22,7 @@ const NoteSchema = new mongoose.Schema({
 
 
 // Validators
-NoteSchema.path('title').validate(v => v.length < MAX_TITLE, '{VALUE} is too long.');
-NoteSchema.path('content').validate(v => v.length < MAX_CONTENT, '{VALUE} is too long.');
+NoteSchema.path('title').validate(v => v.length <= MAX_TITLE, '{VALUE} is too long.');
+NoteSchema.path('content').validate(v => v.length <= MAX_CONTENT, '{VALUE} is too long.');
 
 module.exports = mongoose.model('Note', NoteSchema);
