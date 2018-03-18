@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 
 import Header from '../Header/Header';
-import Footer from '../Footer/Footer';
 import NoteAddBox from '../Note/NoteAddBox';
 
 const App = ({ children }) => (
@@ -11,9 +10,6 @@ const App = ({ children }) => (
     <main>
       {children}
     </main>
-
-    <Footer />
-    <NoteAddBox closed="true"/>
   </div>
 );
 

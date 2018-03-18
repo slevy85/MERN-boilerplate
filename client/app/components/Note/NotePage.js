@@ -37,6 +37,7 @@ class NotePage extends Component {
     this.setState({ noteContent: e.target.value });
   }
   handleAddNote(e) {
+    e.preventDefault();
     this.dialog.show({
       body: 'Do you want to add this note ?',
       bsSize: 'medium',
@@ -77,7 +78,7 @@ class NotePage extends Component {
           noteContent : '',
           showAdd: false
         });
-    });
+    }).catch(err => this.dialog.showAlert('Could not save this note'));
   }
 
   handleCheckBoxChange(note, e) {
@@ -158,7 +159,8 @@ class NotePage extends Component {
     });
  }
  componentWillUnmount(){
-     document.removeEventListener("keydown", this.escFunction, false);
+   console.log('unmount');
+    document.removeEventListener("keydown", this.escFunction, false);
  }
 
   render() {
@@ -166,21 +168,26 @@ class NotePage extends Component {
         <div>
           <ButtonGroup>
             <Button bsStyle="primary" onClick={this.handleShowAdd}>Add</Button>
-            <Button onClick={this.handleDeleteNotes}>Delete</Button>
+            <Button onClick={this.handleDeleteNotes} disabled={this.state.selectedIds.length == 0}>Delete</Button>
           </ButtonGroup>
+
+          <NoteTable
+            data={this.state.notes}
+            handleCheckBoxChange={this.handleCheckBoxChange}
+          />
+
           <NoteAddBox
             show={this.state.showAdd}
             onDismiss={this.handleDismissAdd}
+            okLabel="Add this note"
             onAdd={this.handleAddNote}
             onCancel={this.handleCancelAddNote}
             onTitleChange={this.handleTitleChange}
             onContentChange={this.handleContentChange}
             noteTitle={this.state.noteTitle}
-            noteContent={this.state.noteContent}/>
-          <NoteTable
-            data={this.state.notes}
-            handleCheckBoxChange={this.handleCheckBoxChange}
+            noteContent={this.state.noteContent}
           />
+
           <Dialog ref={(el) => { this.dialog = el }} />
         </div>
     )

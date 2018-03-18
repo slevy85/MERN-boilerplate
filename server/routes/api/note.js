@@ -12,6 +12,21 @@ module.exports = (app) => {
   });
 
   /**
+   * Get a single note
+   * @param req
+   * @param res
+   * @returns void
+   */
+  app.get('/api/notes/:id', (req, res,next) => {
+    Note.findOne({ _id: req.params.id }).exec((err, note) => {
+      if (err) {
+        res.status(500).send(err);
+        return;
+      }
+      res.json({ note });
+    });
+  });
+  /**
    * Save a note
    * @param req
    * @param res
@@ -20,8 +35,9 @@ module.exports = (app) => {
   app.post('/api/notes', function (req, res, next) {
     if (!req.body.note.title && !req.body.note.content) {
       // Fill at least title or content
-      res.status(403).end();
-      return;
+      console.log('empty note');
+      // res.status(403).end();
+      // return;
     }
 
     const newNote = new Note(req.body.note);
@@ -35,8 +51,42 @@ module.exports = (app) => {
       if (err) {
         console.log(err);
         res.status(500).send(err);
+        return;
       }
       res.json({ note: saved });
+    });
+  });
+
+  /**
+   * Edit a note
+   * @param req
+   * @param res
+   * @returns void
+   */
+  app.post('/api/notes/:id', function (req, res, next) {
+    if (!req.body.note.title && !req.body.note.content) {
+      // Fill at least title or content
+      console.log('empty note');
+      // res.status(403).end();
+      // return;
+    }
+    const newNote = new Note(req.body.note);
+    // Let's sanitize inputs
+    newNote.title = sanitizeHtml(newNote.title);
+    newNote.content = sanitizeHtml(newNote.content);
+    var error = newNote.validateSync();
+    if (error) {
+      res.status(403).end();
+      return;
+    }
+
+    Note.update({ _id: req.params.id }, { $set: { title: newNote.title, content: newNote.content }}, (err) => {
+      if(err) {
+        console.log(err);
+        res.status(500).send(err)
+      } else {
+        res.status(200).send(req.body.note).end();
+      }
     });
   });
 
@@ -47,29 +97,4 @@ module.exports = (app) => {
       .catch((err) => res.status(500).send(err));
   });
 
-  app.put('/api/notes/:id/increment', (req, res, next) => {
-    Counter.findById(req.params.id)
-      .exec()
-      .then((counter) => {
-        counter.count++;
-
-        counter.save()
-          .then(() => res.json(counter))
-          .catch((err) => next(err));
-      })
-      .catch((err) => next(err));
-  });
-
-  app.put('/api/notes/:id/decrement', (req, res, next) => {
-    Counter.findById(req.params.id)
-      .exec()
-      .then((counter) => {
-        counter.count--;
-
-        counter.save()
-          .then(() => res.json(counter))
-          .catch((err) => next(err));
-      })
-      .catch((err) => next(err));
-  });
 };

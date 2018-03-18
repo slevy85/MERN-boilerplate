@@ -32,9 +32,24 @@
 .alert textarea {
   resize: none;
 }
-.closed {
-  display:none;
+
+
+.slide-enter {
+  overflow: hidden;
+  transform: translate(100%);
 }
-.not-closed {
-  display:inherit;
+
+.slide-enter.slide-enter-active {
+  transform: translate(0%);
+  transition: transform 1000ms ease-in-out;
+}
+
+.slide-exit {
+  overflow: hidden;
+  transform: translate(0%);
+}
+
+.slide-exit.slide-exit-active {
+  transform: translate(-100%);
+  transition: transform 500ms ease-in-out;
 }
