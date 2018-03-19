@@ -27,7 +27,20 @@ class NotePage extends Component {
       noteContent: '',
     };
   }
+  componentDidMount() {
+    // Close add box on escape key
+    document.addEventListener('keydown', this.escFunction, false);
 
+    // fetch notes
+    callApi('notes').then((res) => {
+      this.setState({
+        notes: res.data.notes,
+      });
+    });
+  }
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.escFunction, false);
+  }
   // Functions to control add form
   handleTitleChange(e) {
     this.setState({ noteTitle: e.target.value });
@@ -62,7 +75,6 @@ class NotePage extends Component {
   }
 
   doAdd() {
-    console.log(this.state);
     return callApi('notes', 'post', {
       note: {
         title: this.state.noteTitle,
@@ -77,7 +89,7 @@ class NotePage extends Component {
         noteContent: '',
         showAdd: false,
       });
-    }).catch(err => this.dialog.showAlert('Could not save this note'));
+    }).catch(() => this.dialog.showAlert('Could not save this note'));
   }
 
   handleCheckBoxChange(note, e) {
@@ -87,14 +99,13 @@ class NotePage extends Component {
     } else {
       newSelectedIds = newSelectedIds.filter(id => note._id !== id);
     }
-    console.log(newSelectedIds);
     this.setState({
       selectedIds: newSelectedIds,
     });
   }
 
-  handleDeleteNotes(e) {
-    if (this.state.selectedIds.length == 0) {
+  handleDeleteNotes() {
+    if (this.state.selectedIds.length === 0) {
       return;
     }
     this.dialog.show({
@@ -117,7 +128,7 @@ class NotePage extends Component {
     let newNotes = this.state.notes;
     let newSelectedIds = this.state.selectedIds;
     this.state.selectedIds.forEach((idToDelete) => {
-      callApi(`notes/${idToDelete}`, 'delete').then((res) => {
+      callApi(`notes/${idToDelete}`, 'delete').then(() => {
         // remove notes from state
         newNotes = newNotes.filter(note => note._id !== idToDelete);
         newSelectedIds = newSelectedIds.filter(id => id !== idToDelete);
@@ -126,7 +137,7 @@ class NotePage extends Component {
           selectedIds: newSelectedIds,
         });
       })
-        .catch((error) => { alert('Could not delete these notes'); });
+        .catch(() => { this.dialog.showAlert('Could not delete these notes'); });
     });
   }
 
@@ -146,28 +157,12 @@ class NotePage extends Component {
     }
   }
 
-  componentDidMount() {
-    // Close add box on escape key
-    document.addEventListener('keydown', this.escFunction, false);
-
-    // fetch notes
-    callApi('notes').then((res) => {
-      this.setState({
-        notes: res.data.notes,
-      });
-    });
-  }
-  componentWillUnmount() {
-    console.log('unmount');
-    document.removeEventListener('keydown', this.escFunction, false);
-  }
-
   render() {
     return (
       <div>
         <ButtonGroup>
           <Button bsStyle="primary" onClick={this.handleShowAdd}>Add</Button>
-          <Button onClick={this.handleDeleteNotes} disabled={this.state.selectedIds.length == 0}>Delete</Button>
+          <Button onClick={this.handleDeleteNotes} disabled={this.state.selectedIds.length === 0}>Delete</Button>
         </ButtonGroup>
 
         <NoteTable

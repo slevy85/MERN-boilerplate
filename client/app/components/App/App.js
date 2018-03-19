@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
-
+import React from 'react';
+import PropTypes from 'prop-types';
 import Header from '../Header/Header';
-import NoteAddBox from '../Note/NoteAddBox';
 
 const App = ({ children }) => (
   <div className="container">
@@ -10,7 +9,16 @@ const App = ({ children }) => (
     <main>
       {children}
     </main>
+
+    <br />
   </div>
 );
+
+App.defaultProps = {
+  children: '',
+};
+App.propTypes = {
+  children: PropTypes.node,
+};
 
 export default App;

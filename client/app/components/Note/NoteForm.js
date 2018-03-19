@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import Alert from 'react-bootstrap/lib/Alert';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Button from 'react-bootstrap/lib/Button';
 import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
 
@@ -52,4 +52,18 @@ function NoteForm(props) {
   );
 }
 
+NoteForm.defaultProps = {
+  noteTitle: '',
+  noteContent: '',
+  okLabel: 'Submit',
+};
+NoteForm.propTypes = {
+  onTitleChange: PropTypes.func.isRequired,
+  onContentChange: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired,
+  noteContent: PropTypes.string,
+  noteTitle: PropTypes.string,
+  okLabel: PropTypes.string,
+};
 export default NoteForm;

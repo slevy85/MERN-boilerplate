@@ -2,7 +2,7 @@ const sanitizeHtml = require('sanitize-html');
 const Note = require('../../models/Note');
 
 module.exports = (app) => {
-  app.get('/api/notes', (req, res, next) => {
+  app.get('/api/notes', (req, res) => {
     Note.find().sort('-createdAt').exec((err, notes) => {
       if (err) {
         res.status(500).send(err);
@@ -17,7 +17,7 @@ module.exports = (app) => {
    * @param res
    * @returns void
    */
-  app.get('/api/notes/:id', (req, res, next) => {
+  app.get('/api/notes/:id', (req, res) => {
     Note.findOne({ _id: req.params.id }).exec((err, note) => {
       if (err) {
         res.status(500).send(err);
@@ -32,14 +32,7 @@ module.exports = (app) => {
    * @param res
    * @returns void
    */
-  app.post('/api/notes', (req, res, next) => {
-    if (!req.body.note.title && !req.body.note.content) {
-      // Fill at least title or content
-      console.log('empty note');
-      // res.status(403).end();
-      // return;
-    }
-
+  app.post('/api/notes', (req, res) => {
     const newNote = new Note(req.body.note);
     // Let's sanitize inputs
     newNote.title = sanitizeHtml(newNote.title);
@@ -63,13 +56,7 @@ module.exports = (app) => {
    * @param res
    * @returns void
    */
-  app.post('/api/notes/:id', (req, res, next) => {
-    if (!req.body.note.title && !req.body.note.content) {
-      // Fill at least title or content
-      console.log('empty note');
-      // res.status(403).end();
-      // return;
-    }
+  app.post('/api/notes/:id', (req, res) => {
     const newNote = new Note(req.body.note);
     // Let's sanitize inputs
     newNote.title = sanitizeHtml(newNote.title);

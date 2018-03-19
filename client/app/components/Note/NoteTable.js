@@ -1,29 +1,27 @@
-import React, { Component, PropTypes } from 'react';
-import ReactTable from 'react-table';
-import { Tips } from '../Utils/Utils';
 import 'react-table/react-table.css';
 import { withRouter } from 'react-router-dom';
+import React from 'react';
+import PropTypes from 'prop-types';
+import ReactTable from 'react-table';
+import { Tips } from '../Utils/Utils';
 
-
-function CheckBoxCell(props, context) {
+function CheckBoxCell(props) {
   const _onChange = (e) => {
-    props.handleCheckBoxChange(props.note, e);
+    props.onChange(props.note, e);
   };
   return (
     <input type="checkbox" onChange={_onChange} />
   );
 }
 
-CheckBoxCell.propTypes = {
-};
-
-function NoteTable(props, context) {
+function NoteTable(props) {
+  const { handleCheckBoxChange } = props;
   const columns = [{
     // Header: props => <input type="checkbox"/>,
     Cell: row => (<CheckBoxCell
       key={row.original._id}
       note={row.original}
-      handleCheckBoxChange={props.handleCheckBoxChange}
+      onChange={handleCheckBoxChange}
     />),
     className: 'table-checkbox-col',
     width: 34,
@@ -60,17 +58,10 @@ function NoteTable(props, context) {
         columns={columns}
         minRows="5"
         className="-striped -highlight"
-        getTdProps={(state, rowInfo, column, instance) => {
+        getTdProps={(state, rowInfo, column) => {
               return {
-                onClick: (e) => {
+                onClick: () => {
                   if (!column.id) return; // The checkbox cell has no id and is not clickable
-                  console.log('Cell - onClick', {
-                    state,
-                    rowInfo,
-                    column,
-                    instance,
-                    event: e,
-                    });
                     // navigate
                     props.history.push(`/notes/${rowInfo.original._id}`);
                   },
@@ -81,5 +72,15 @@ function NoteTable(props, context) {
     </div>
   );
 }
+CheckBoxCell.propTypes = {
+  onChange: PropTypes.func.isRequired,
+  note: PropTypes.objectOf.isRequired,
+};
+NoteTable.propTypes = {
+  data: PropTypes.array.isRequired,
+  handleCheckBoxChange: PropTypes.func.isRequired,
+  history: PropTypes.object.isRequired,
+};
+
 
 export default withRouter(NoteTable);

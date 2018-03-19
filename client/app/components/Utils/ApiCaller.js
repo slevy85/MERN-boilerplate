@@ -1,6 +1,5 @@
-import fetch from 'isomorphic-fetch';
-import config from '../../../../config/config';
 import axios from 'axios';
+import config from '../../../../config/config';
 
 export const API_URL = (typeof window === 'undefined' || process.env.NODE_ENV === 'test') ?
   process.env.BASE_URL || (`http://localhost:${process.env.PORT || config.port}/api`) :

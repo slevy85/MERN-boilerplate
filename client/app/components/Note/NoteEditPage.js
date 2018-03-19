@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import callApi from '../Utils/ApiCaller';
-import { withRouter } from 'react-router-dom';
 import { Redirect } from 'react-router';
+import PropTypes from 'prop-types';
 import Dialog from 'react-bootstrap-dialog';
 import Button from 'react-bootstrap/lib/Button';
+import callApi from '../Utils/ApiCaller';
 
 import NoteForm from './NoteForm';
 
@@ -22,6 +22,19 @@ class NoteEditPage extends Component {
     };
   }
 
+  componentDidMount() {
+    // fetch note to edit
+    callApi(`notes/${this.props.match.params.id}`)
+      .then((res) => {
+        this.setState({
+          noteTitle: res.data.note.title,
+          noteContent: res.data.note.content,
+        });
+      })
+    // redirect if not found
+      .catch(() => this.setState({ redirect: true }));
+  }
+
   // Functions to control add form
   handleTitleChange(e) {
     this.setState({ noteTitle: e.target.value });
@@ -31,7 +44,6 @@ class NoteEditPage extends Component {
   }
 
   handleEditNote(e) {
-    console.log(this.state);
     e.preventDefault();
     this.dialog.show({
       body: 'Do you want to edit this note ?',
@@ -52,19 +64,20 @@ class NoteEditPage extends Component {
   handleCancel() {
     this.setState({ redirect: true });
   }
+
   doEdit() {
-    console.log(this.state);
     return callApi(`notes/${this.props.match.params.id}`, 'post', {
       note: {
         title: this.state.noteTitle,
         content: this.state.noteContent,
       },
-    }).then((res) => {
+    }).then(() => {
       // TODO alert for edit success
       this.setState({ redirect: true });
-    }).catch(err => this.dialog.showAlert('Could note edit this note'));
+    }).catch(() => this.dialog.showAlert('Could note edit this note'));
   }
-  handleDeleteNote(e) {
+
+  handleDeleteNote() {
     this.dialog.show({
       body: 'Do you want to delete this note ?',
       bsSize: 'medium',
@@ -84,22 +97,10 @@ class NoteEditPage extends Component {
   doDelete() {
     callApi(`notes/${this.props.match.params.id}`, 'delete')
     // redirect after delete
-      .then(res => this.setState({ redirect: true }))
-      .catch((error) => { this.dialog.showAlert('Could not delete this note'); });
+      .then(() => this.setState({ redirect: true }))
+      .catch(() => { this.dialog.showAlert('Could not delete this note'); });
   }
 
-  componentDidMount() {
-    // fetch note to edit
-    callApi(`notes/${this.props.match.params.id}`)
-      .then((res) => {
-        this.setState({
-          noteTitle: res.data.note.title,
-          noteContent: res.data.note.content,
-        });
-      })
-    // redirect if not found
-      .catch(err => this.setState({ redirect: true }));
-  }
   render() {
     if (this.state.redirect) {
       return <Redirect to="/" />;
@@ -127,4 +128,9 @@ class NoteEditPage extends Component {
     );
   }
 }
-export default withRouter(NoteEditPage);
+
+NoteEditPage.propTypes = {
+  match: PropTypes.object.isRequired,
+};
+
+export default NoteEditPage;

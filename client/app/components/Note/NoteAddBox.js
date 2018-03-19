@@ -1,28 +1,49 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import Alert from 'react-bootstrap/lib/Alert';
 import NoteForm from './NoteForm';
 
 function NoteAddBox(props) {
-  if (!props.show) return null;
+  const {
+    show, okLabel, onAdd, onCancel, onTitleChange, onContentChange, noteTitle, noteContent, onDismiss,
+  } = props;
+  if (!show) return null;
   return (
     <div className="fixed-bottom-right">
       <div className="alert-head" >
         <strong>Please write a note</strong>
-        <a href="#" className="close" onClick={props.onDismiss}>&times;</a>
+        <button className="close" onClick={onDismiss}>&times;</button>
       </div>
       <Alert bsStyle="success">
         <NoteForm
-          okLabel={props.okLabel}
-          onSubmit={props.onAdd}
-          onCancel={props.onCancel}
-          onTitleChange={props.onTitleChange}
-          onContentChange={props.onContentChange}
-          noteTitle={props.noteTitle}
-          noteContent={props.noteContent}
+          okLabel={okLabel}
+          onSubmit={onAdd}
+          onCancel={onCancel}
+          onTitleChange={onTitleChange}
+          onContentChange={onContentChange}
+          noteTitle={noteTitle}
+          noteContent={noteContent}
         />
       </Alert>
     </div>
   );
 }
 
+NoteAddBox.defaultProps = {
+  show: false,
+  noteTitle: '',
+  noteContent: '',
+  okLabel: 'Submit',
+};
+NoteAddBox.propTypes = {
+  show: PropTypes.bool,
+  onDismiss: PropTypes.func.isRequired,
+  onTitleChange: PropTypes.func.isRequired,
+  onContentChange: PropTypes.func.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired,
+  noteContent: PropTypes.string,
+  noteTitle: PropTypes.string,
+  okLabel: PropTypes.string,
+};
 export default NoteAddBox;
