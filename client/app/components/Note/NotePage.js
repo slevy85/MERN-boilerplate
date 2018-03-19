@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ButtonGroup from 'react-bootstrap/lib/ButtonGroup';
 import Button from 'react-bootstrap/lib/Button';
-import Dialog from 'react-bootstrap-dialog'
+import Dialog from 'react-bootstrap-dialog';
 import NoteAddBox from './NoteAddBox';
 import NoteTable from './NoteTable';
 import callApi from '../Utils/ApiCaller';
@@ -24,12 +24,11 @@ class NotePage extends Component {
       selectedIds: [],
       showAdd: false,
       noteTitle: '',
-      noteContent: ''
+      noteContent: '',
     };
-
   }
 
-  //Functions to control add form
+  // Functions to control add form
   handleTitleChange(e) {
     this.setState({ noteTitle: e.target.value });
   }
@@ -46,56 +45,56 @@ class NotePage extends Component {
         Dialog.DefaultAction(
           'Yes',
           () => {
-            this.doAdd()
+            this.doAdd();
           },
           'btn-success'
-        )
-      ]
-    })
+        ),
+      ],
+    });
   }
 
   handleCancelAddNote() {
     this.setState({
-      noteTitle : '',
-      noteContent : '',
-      showAdd: false
+      noteTitle: '',
+      noteContent: '',
+      showAdd: false,
     });
   }
 
-  doAdd(){
-    console.log(this.state)
+  doAdd() {
+    console.log(this.state);
     return callApi('notes', 'post', {
       note: {
         title: this.state.noteTitle,
         content: this.state.noteContent,
       },
-    }).then(res => {
-        let newNotes = this.state.notes;
-        newNotes.push(res.data.note);
-        this.setState({
-          notes: newNotes,
-          noteTitle : '',
-          noteContent : '',
-          showAdd: false
-        });
+    }).then((res) => {
+      const newNotes = this.state.notes;
+      newNotes.push(res.data.note);
+      this.setState({
+        notes: newNotes,
+        noteTitle: '',
+        noteContent: '',
+        showAdd: false,
+      });
     }).catch(err => this.dialog.showAlert('Could not save this note'));
   }
 
   handleCheckBoxChange(note, e) {
     let newSelectedIds = this.state.selectedIds;
-    if(e.target.checked) {
+    if (e.target.checked) {
       newSelectedIds.push(note._id);
     } else {
-      newSelectedIds = newSelectedIds.filter(id => note._id !== id)
+      newSelectedIds = newSelectedIds.filter(id => note._id !== id);
     }
-    console.log(newSelectedIds)
+    console.log(newSelectedIds);
     this.setState({
-      selectedIds: newSelectedIds
+      selectedIds: newSelectedIds,
     });
   }
 
   handleDeleteNotes(e) {
-    if(this.state.selectedIds.length == 0) {
+    if (this.state.selectedIds.length == 0) {
       return;
     }
     this.dialog.show({
@@ -106,29 +105,29 @@ class NotePage extends Component {
         Dialog.DefaultAction(
           'Yes',
           () => {
-            this.doDelete()
+            this.doDelete();
           },
           'btn-danger'
-        )
-      ]
-    })
+        ),
+      ],
+    });
   }
 
   doDelete() {
     let newNotes = this.state.notes;
     let newSelectedIds = this.state.selectedIds;
-    this.state.selectedIds.forEach( idToDelete => {
-      callApi(`notes/${idToDelete}`, 'delete').then(res => {
+    this.state.selectedIds.forEach((idToDelete) => {
+      callApi(`notes/${idToDelete}`, 'delete').then((res) => {
         // remove notes from state
-        newNotes = newNotes.filter(note => note._id !== idToDelete)
-        newSelectedIds = newSelectedIds.filter(id => id !== idToDelete)
+        newNotes = newNotes.filter(note => note._id !== idToDelete);
+        newSelectedIds = newSelectedIds.filter(id => id !== idToDelete);
         this.setState({
-            notes: newNotes,
-            selectedIds : newSelectedIds
-          });
+          notes: newNotes,
+          selectedIds: newSelectedIds,
+        });
       })
-      .catch(error => {alert('Could not delete these notes')});
-    })
+        .catch((error) => { alert('Could not delete these notes'); });
+    });
   }
 
   handleDismissAdd(e) {
@@ -137,60 +136,60 @@ class NotePage extends Component {
   }
 
   handleShowAdd() {
-   this.setState({ showAdd: true });
- }
+    this.setState({ showAdd: true });
+  }
 
- escFunction(event){
-    //Close add box on escape
-   if(event.keyCode === 27) {
-      this.handleDismissAdd(event)
-   }
- }
+  escFunction(event) {
+    // Close add box on escape
+    if (event.keyCode === 27) {
+      this.handleDismissAdd(event);
+    }
+  }
 
- componentDidMount(){
+  componentDidMount() {
     // Close add box on escape key
-    document.addEventListener("keydown", this.escFunction, false);
+    document.addEventListener('keydown', this.escFunction, false);
 
     // fetch notes
-    callApi('notes').then(res => {
+    callApi('notes').then((res) => {
       this.setState({
-        notes: res.data.notes
+        notes: res.data.notes,
       });
     });
- }
- componentWillUnmount(){
-   console.log('unmount');
-    document.removeEventListener("keydown", this.escFunction, false);
- }
+  }
+  componentWillUnmount() {
+    console.log('unmount');
+    document.removeEventListener('keydown', this.escFunction, false);
+  }
 
   render() {
     return (
-        <div>
-          <ButtonGroup>
-            <Button bsStyle="primary" onClick={this.handleShowAdd}>Add</Button>
-            <Button onClick={this.handleDeleteNotes} disabled={this.state.selectedIds.length == 0}>Delete</Button>
-          </ButtonGroup>
+      <div>
+        <ButtonGroup>
+          <Button bsStyle="primary" onClick={this.handleShowAdd}>Add</Button>
+          <Button onClick={this.handleDeleteNotes} disabled={this.state.selectedIds.length == 0}>Delete</Button>
+        </ButtonGroup>
 
-          <NoteTable
-            data={this.state.notes}
-            handleCheckBoxChange={this.handleCheckBoxChange}
-          />
+        <NoteTable
+          data={this.state.notes}
+          handleCheckBoxChange={this.handleCheckBoxChange}
+        />
 
-          <NoteAddBox
-            show={this.state.showAdd}
-            onDismiss={this.handleDismissAdd}
-            okLabel="Add this note"
-            onAdd={this.handleAddNote}
-            onCancel={this.handleCancelAddNote}
-            onTitleChange={this.handleTitleChange}
-            onContentChange={this.handleContentChange}
-            noteTitle={this.state.noteTitle}
-            noteContent={this.state.noteContent}
-          />
+        <NoteAddBox
+          show={this.state.showAdd}
+          onDismiss={this.handleDismissAdd}
+          okLabel="Add this note"
+          onAdd={this.handleAddNote}
+          onCancel={this.handleCancelAddNote}
+          onTitleChange={this.handleTitleChange}
+          onContentChange={this.handleContentChange}
+          noteTitle={this.state.noteTitle}
+          noteContent={this.state.noteContent}
+        />
 
-          <Dialog ref={(el) => { this.dialog = el }} />
-        </div>
-    )
+        <Dialog ref={(el) => { this.dialog = el; }} />
+      </div>
+    );
   }
 }
 

@@ -8,9 +8,9 @@ export const API_URL = (typeof window === 'undefined' || process.env.NODE_ENV ==
 
 export default function callApi(endpoint, method = 'get', body) {
   return axios({
-    method: method,
-    url : `${API_URL}/${endpoint}`,
+    method,
+    url: `${API_URL}/${endpoint}`,
     data: JSON.stringify(body),
-    headers: { 'content-type': 'application/json' }
+    headers: { 'content-type': 'application/json' },
   });
 }

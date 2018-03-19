@@ -5,20 +5,20 @@ const MAX_CONTENT = 610;
 
 const NoteSchema = new mongoose.Schema({
   title: {
-      type: String,
-      required: function() {
-        // Required if no content
-          return !this.content ;
-      }
+    type: String,
+    required() {
+      // Required if no content
+      return !this.content;
+    },
   },
-  content : {
-      type: String,
-      required: function() {
-        // Required if no title
-          return !this.title ;
-      }
-  }
-}, { timestamps : true });
+  content: {
+    type: String,
+    required() {
+      // Required if no title
+      return !this.title;
+    },
+  },
+}, { timestamps: true });
 
 
 // Validators

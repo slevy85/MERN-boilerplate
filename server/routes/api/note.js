@@ -17,7 +17,7 @@ module.exports = (app) => {
    * @param res
    * @returns void
    */
-  app.get('/api/notes/:id', (req, res,next) => {
+  app.get('/api/notes/:id', (req, res, next) => {
     Note.findOne({ _id: req.params.id }).exec((err, note) => {
       if (err) {
         res.status(500).send(err);
@@ -32,7 +32,7 @@ module.exports = (app) => {
    * @param res
    * @returns void
    */
-  app.post('/api/notes', function (req, res, next) {
+  app.post('/api/notes', (req, res, next) => {
     if (!req.body.note.title && !req.body.note.content) {
       // Fill at least title or content
       console.log('empty note');
@@ -44,7 +44,7 @@ module.exports = (app) => {
     // Let's sanitize inputs
     newNote.title = sanitizeHtml(newNote.title);
     newNote.content = sanitizeHtml(newNote.content);
-    console.log('newNote : ' + newNote);
+    console.log(`newNote : ${newNote}`);
     newNote.save((err, saved) => {
       console.log(err);
       console.log(saved);
@@ -63,7 +63,7 @@ module.exports = (app) => {
    * @param res
    * @returns void
    */
-  app.post('/api/notes/:id', function (req, res, next) {
+  app.post('/api/notes/:id', (req, res, next) => {
     if (!req.body.note.title && !req.body.note.content) {
       // Fill at least title or content
       console.log('empty note');
@@ -74,27 +74,26 @@ module.exports = (app) => {
     // Let's sanitize inputs
     newNote.title = sanitizeHtml(newNote.title);
     newNote.content = sanitizeHtml(newNote.content);
-    var error = newNote.validateSync();
+    const error = newNote.validateSync();
     if (error) {
       res.status(403).end();
       return;
     }
 
-    Note.update({ _id: req.params.id }, { $set: { title: newNote.title, content: newNote.content }}, (err) => {
-      if(err) {
+    Note.update({ _id: req.params.id }, { $set: { title: newNote.title, content: newNote.content } }, (err) => {
+      if (err) {
         console.log(err);
-        res.status(500).send(err)
+        res.status(500).send(err);
       } else {
         res.status(200).send(req.body.note).end();
       }
     });
   });
 
-  app.delete('/api/notes/:id', function (req, res, next) {
+  app.delete('/api/notes/:id', (req, res) => {
     Note.findOneAndRemove({ _id: req.params.id })
       .exec()
-      .then((note) => res.status(200).end())
-      .catch((err) => res.status(500).send(err));
+      .then(() => res.status(200).end())
+      .catch(err => res.status(500).send(err));
   });
-
 };

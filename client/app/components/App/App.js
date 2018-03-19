@@ -4,7 +4,7 @@ import Header from '../Header/Header';
 import NoteAddBox from '../Note/NoteAddBox';
 
 const App = ({ children }) => (
-  <div class="container">
+  <div className="container">
     <Header />
 
     <main>
